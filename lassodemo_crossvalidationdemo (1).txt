@@ -1,0 +1,51 @@
+#############
+install.packages("lars")
+library(lars)
+
+lasso <-lars(x=as.matrix(prostate[,2:6]),y=as.numeric(prostate[,1]),trace=TRUE)
+coef(lasso,s=0.8,mode="fraction")
+coef(lasso,s=0.2,mode="fraction")
+cv.lars(x=as.matrix(prostate[,2:6]),y=as.numeric(prostate[,1]),K=10)
+plot(lasso)
+
+z<-rnorm(97*100,0,1)
+z<-array(z,dim=c(97,100))
+xmat<-cbind(as.matrix(prostate[,2:6]),z)
+
+lasso <-lars(x=xmat,y=as.numeric(prostate[,1]),trace=TRUE)
+
+cv.lars(x=xmat,y=as.numeric(prostate[,1]),K=10)
+
+coef(lasso,s=0.08,mode="fraction")
+
+
+#####cross validation  Q2 part c
+##suppose we have 1000 data points
+totalCVerror<-0
+for ( j in 1:100){
+  training<-sample(1:1000,800)
+  trainingset<-data[training,]
+  testingset<-data[-training,]
+  ###fill in the codes to get the predictions errors
+  ### update the totalCVerror
+  model<-lm(y~x, data=trainingset)
+  prediction<-predict.lm(model, data=testingset)  #check the syntax of predict.lm
+  errors<-sum((testingset$y-prediction)^2)
+  totalCVerror<-totalCVerror+errors
+}
+averageCVerrors<-totalCVerror/100
+
+ 
+  totalCVerror<-0
+for ( j in 1:100){
+  training<-sample(1:731,584)
+  trainingset<-day[training,]
+  testingset<-day[-training,]
+  ###fill in the codes to get the predictions errors
+  ### update the totalCVerror
+  model<-lm(registered~temp+hum, data=trainingset)
+  prediction<-predict.lm(model, new=testingset)  #check the syntax of predict.lm
+  errors<-sum((testingset$y-prediction)^2)
+  totalCVerror<-totalCVerror+errors
+}
+averageCVerrors<-totalCVerror/100
